@@ -1,0 +1,80 @@
+ENVPYTHON = /path/to/python
+DBCREDS = /tulsa/configs/dbcreds.json
+DBDEFAULTPROFILE = /tulsa/configs/default_profile
+ETLDIR = /tulsa/tulsa/etl
+MAPCORRECTIONS = /tulsa/configs/map_corrections.json
+STATEDIR = /path/to/Drake/state
+DATADIR = /path/to/data
+
+upload-all-files <- $[DATADIR]
+    $[ENVPYTHON] upload_csv_xls_tsv_to_postgres.py --dir $INPUT
+    touch $OUTPUT
+
+demographics-view <- upload-all-files
+    eval $(cat $[DBDEFAULTPROFILE])
+    psql -f $[ETLDIR]/sql/drop_demographics_view.sql
+    psql -f $[ETLDIR]/sql/demographics_10_11_pk.sql
+    psql -f $[ETLDIR]/sql/demographics_11_12_pk_k.sql
+    psql -f $[ETLDIR]/sql/demographics_12_13_pk_1st.sql
+    psql -f $[ETLDIR]/sql/demographics_13_14_pk_2nd.sql
+    psql -f $[ETLDIR]/sql/demographics_14_15_pk_3rd.sql
+    psql -f $[ETLDIR]/sql/demographics_15_16_pk_4th.sql
+    psql -f $[ETLDIR]/sql/demographics_dob_fix.sql
+    psql -f $[ETLDIR]/sql/demographics_view.sql
+    touch $[STATEDIR]/$OUTPUT
+
+make-map-view <- upload-all-files
+    $[ENVPYTHON] make_view_from_raw.py --config $[DBCREDS] --table_prefix map --view_name map --date_cols_from_title --correction $[MAPCORRECTIONS]
+    touch $[STATEDIR]/$OUTPUT
+
+make-reenroll-view <- upload-all-files
+    $[ENVPYTHON] make_view_from_raw.py --config $[DBCREDS] --table reenrollment_11_16_renrollment_data_2011_-_2016_fo --view_name reenroll
+    touch $[STATEDIR]/$OUTPUT
+
+clean-tripod <- upload-all-files
+    eval $(cat $[DBDEFAULTPROFILE])
+    psql -f $[ETLDIR]/sql/drop_tripod_view.sql
+    psql -f $[ETLDIR]/sql/tripod_14_fall.sql
+    psql -f $[ETLDIR]/sql/tripod_15_spring.sql
+    psql -f $[ETLDIR]/sql/tripod_15_fall.sql
+    psql -f $[ETLDIR]/sql/tripod_16_spring.sql
+    psql -f $[ETLDIR]/sql/tripod_view.sql
+    touch $[STATEDIR]/$OUTPUT
+
+make-iread-view <- upload-all-files
+    $[ENVPYTHON] iread.py
+    touch $[STATEDIR]/$OUTPUT
+
+clean-rsa <- upload-all-files
+    eval $(cat $[DBDEFAULTPROFILE])
+    psql -f $[ETLDIR]/sql/rsa_logs.sql
+    touch $OUTPUT
+
+clean-tfa <- upload-all-files
+    eval $(cat $[DBDEFAULTPROFILE])
+    psql -f $[ETLDIR]/sql/tfa_view.sql
+    touch $OUTPUT
+
+clean-attendance <- upload-all-files
+    $[ENVPYTHON] clean_attendance_from_raw.py
+    touch $[STATEDIR]/$OUTPUT
+
+clean-daily-attendance <- upload-all-files
+    eval $(cat $[DBDEFAULTPROFILE])
+    psql -f $[ETLDIR]/sql/att_by_day_12_16.sql
+    touch $OUTPUT
+
+clean-occt <- upload-all-files
+    eval $(cat $[DBDEFAULTPROFILE])
+    psql -f $[ETLDIR]/sql/drop_occt_view.sql
+    psql -f $[ETLDIR]/sql/occt_2015.sql
+    psql -f $[ETLDIR]/sql/occt_2014.sql
+    psql -f $[ETLDIR]/sql/occt_2013.sql
+    psql -f $[ETLDIR]/sql/occt_view.sql
+    touch $[STATEDIR]/$OUTPUT
+
+make-attendance-view <- clean-occt
+    $[ENVPYTHON] make_view_attendance.py
+    touch $[STATEDIR]/$OUTPUT
+    
+

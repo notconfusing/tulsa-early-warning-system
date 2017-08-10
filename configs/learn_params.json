@@ -1,0 +1,10 @@
+{"labels_to_make": ["eventualnot186"],
+ "feature_groups_to_make": ["all"],
+ "models_to_make": {
+    "RF":{"n_estimators": [1000], "max_depth": [50], "max_features": ["log2"],"min_samples_split": [10]},
+    "LR": { "penalty": ["l1"], "C": [0.01]}
+                    },
+ "metrics_to_make": ["pre_rec_n_graph", "precision_at_50", "recall_at_50", "auc"],
+ "split_strategy": ["cohort"],
+ "scale": true
+}

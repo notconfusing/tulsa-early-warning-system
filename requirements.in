@@ -1,0 +1,8 @@
+click
+matplotlib
+numpy
+pandas
+scikit-learn
+scipy
+sqlalchemy
+psycopg2

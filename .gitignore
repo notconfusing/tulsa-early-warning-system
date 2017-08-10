@@ -1,0 +1,5 @@
+dbcreds.py
+*~
+*.pyc
+configs/dbcreds.json
+tulsa/etl/Drakefile

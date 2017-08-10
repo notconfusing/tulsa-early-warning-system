@@ -1,0 +1,9 @@
+{"labels_to_make": ["eventualnot186_with2nd"],
+ "feature_groups_to_make": ["all"],
+ "models_to_make": {
+    "LR": { "penalty": ["l1"], "C": [0.01]}
+                    },
+ "metrics_to_make": [],
+ "split_strategy": ["predict_new"],
+ "scale": true
+}

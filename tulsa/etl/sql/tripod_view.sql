@@ -1,0 +1,91 @@
+CREATE VIEW clean_data.tripod AS
+
+SELECT
+    yr,
+    season,
+    school_id,
+    school_name,
+    teacher_id,
+    teacher_name,
+    class_id,
+    grade,
+    responses,
+    challenge,
+    classroom_management,
+    captivate,
+    care,
+    clarify,
+    consolidate,
+    confer,
+    cs
+FROM
+    clean_data.tripod_14_fall
+
+UNION
+
+SELECT
+    yr,
+    season,
+    school_id,
+    school_name,
+    teacher_id,
+    teacher_name,
+    class_id,
+    grade,
+    responses,
+    challenge,
+    classroom_management,
+    captivate,
+    care,
+    clarify,
+    consolidate,
+    confer,
+    cs
+FROM
+    clean_data.tripod_15_spring
+
+UNION
+
+SELECT
+    yr,
+    season,
+    school_id,
+    school_name,
+    teacher_id,
+    teacher_name,
+    class_id,
+    grade,
+    responses,
+    challenge,
+    classroom_management,
+    captivate,
+    care,
+    clarify,
+    consolidate,
+    confer,
+    cs
+FROM    
+    clean_data.tripod_15_fall
+
+UNION
+
+SELECT
+    yr,
+    season,
+    school_id,
+    school_name,
+    teacher_id,
+    teacher_name,
+    class_id,
+    grade,
+    responses,
+    challenge,
+    classroom_management,
+    captivate,
+    care,
+    clarify,
+    consolidate,
+    confer,
+    cs
+FROM    
+    clean_data.tripod_16_spring;
